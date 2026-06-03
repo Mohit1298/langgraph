@@ -3,3 +3,14 @@ __pycache__/
 *.pyc
 .python-version
 .DS_Store
+
+# Secrets
+.env
+
+# Source documents (don't commit user PDFs); keep the folder via .gitkeep
+docs/*
+!docs/.gitkeep
+
+# Local vector store persistence (if ever enabled)
+.chroma/
+chroma_db/

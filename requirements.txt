@@ -1,2 +1,10 @@
-langgraph>=0.2.0
-pydantic>=2.0
+langgraph
+langchain
+langchain-community
+langchain-openai
+langchain-chroma
+chromadb
+pypdf
+streamlit
+python-dotenv
+tavily-python

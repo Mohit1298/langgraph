@@ -1,21 +1,15 @@
-# LangGraph + Pydantic: Simple Conditional Workflow
+# Agentic (Corrective) RAG Assistant
 
-A minimal [LangGraph](https://langchain-ai.github.io/langgraph/) workflow that uses a
-**Pydantic** model as its state and demonstrates a **conditional edge**.
+A self-correcting RAG chatbot over your PDFs, built with **LangGraph**. See the
+full architecture and talking points at the bottom — this header is expanded in
+Phase 3.
 
-## What it does
+## Phase 1 — Core RAG (current)
 
-```
-START → ingest → (conditional) → handle_even → END
-                              └─→ handle_odd  → END
-```
-
-1. `ingest` receives a number and records the step.
-2. A conditional edge (`route_even_or_odd`) inspects the state and routes to
-   either `handle_even` or `handle_odd`.
-3. The chosen branch updates the shared Pydantic `WorkflowState`.
-
-No API keys are required — the logic is pure Python.
+- `ingest.py` — load PDFs from `docs/`, chunk, embed (`text-embedding-3-small`),
+  build an in-memory Chroma vector store, expose `get_retriever(k=4)`.
+- `prompts.py` — grading / rewrite / generation prompts.
+- `app.py` — Streamlit chat UI with grounded answers + source citations.
 
 ## Setup
 
@@ -23,24 +17,14 @@ No API keys are required — the logic is pure Python.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env          # then add your OPENAI_API_KEY
 ```
 
-## Run
+Drop a few PDFs into `docs/`, then run:
 
 ```bash
-python workflow.py
+streamlit run app.py
 ```
 
-Expected output:
-
-```
-input=4
-  category: even
-  message:  4 is even, so half of it is 2.
-  steps:    ['ingested 4', 'handled as even']
-
-input=7
-  category: odd
-  message:  7 is odd, so triple it plus one is 22.
-  steps:    ['ingested 7', 'handled as odd']
-```
+Ask a question answerable from your PDFs and you'll get a grounded answer with
+`(source: <file> p.<n>)` citations.
